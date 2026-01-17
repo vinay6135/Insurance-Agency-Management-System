@@ -2,6 +2,9 @@ package com.ey.dto.request;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -11,26 +14,31 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class CustomerRequestDTO {
-	
-	@NotBlank(message="Full name required")
-	@Size(min=3, max=50)
-	private String fullName;
-	
-	@NotBlank(message="Date of Birth is required")
-	@Past(message="Date of birth must be in the past")
-	private LocalDate dateofBirth;
-	
-	@NotNull(message="Age is required")
-	@Min(value=18, message="Minimum age must be 18")
-	@Max(value=80, message="Maximum age allowed is 80")
-	private  Integer age;
-	
-	@NotBlank(message="Gender is required")
-	private String gender;
-	
-	@NotNull(message="Phone number is required")
-	@Pattern(regexp = "^[6-9]\\d{9}$", message = "Invalid Indian phone number")
+
+    @NotBlank(message = "Full name is required")
+    @Size(min = 3, max = 100)
+    private String fullName;
+
+    @NotNull(message = "Date of birth is required")
+    @Past(message = "Date of birth must be in the past")
+    @JsonFormat(pattern="dd-MM-yyyy")
+    private LocalDate dateOfBirth;
+
+    @NotNull(message = "Age is required")
+    @Min(value = 18, message = "Minimum age must be 18")
+    @Max(value = 100, message = "Maximum age allowed is 100")
+    private Integer age;
+
+    @NotBlank(message = "Gender is required")
+    private String gender;
+
+    @NotBlank(message = "Phone number is required")
+    @Pattern(regexp = "^[6-9]\\d{9}$", message = "Invalid Indian phone number")
     private String contactNumber;
+    
+    @NotBlank(message="Email Id is required")
+    @Email(message="Invalid Email Address")
+    private String email;
 
     @NotBlank(message = "Address is required")
     @Size(min = 10)
@@ -42,10 +50,11 @@ public class CustomerRequestDTO {
     @NotBlank(message = "Nominee relation is required")
     private String nomineeRelation;
     
-    @NotBlank(message="Nominee phone number is required")
+    @NotBlank(message="Nominee phone number required")
     private String nomineePhone;
 
     @NotBlank(message = "Identity proof number is required")
+  
     private String identityProofNumber;
 
 	public String getFullName() {
@@ -56,12 +65,12 @@ public class CustomerRequestDTO {
 		this.fullName = fullName;
 	}
 
-	public LocalDate getDateofBirth() {
-		return dateofBirth;
+	public LocalDate getDateOfBirth() {
+		return dateOfBirth;
 	}
 
-	public void setDateofBirth(LocalDate dateofBirth) {
-		this.dateofBirth = dateofBirth;
+	public void setDateOfBirth(LocalDate dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
 	}
 
 	public Integer getAge() {
@@ -89,6 +98,15 @@ public class CustomerRequestDTO {
 	public void setContactNumber(String contactNumber) {
 		this.contactNumber = contactNumber;
 	}
+	
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 	public String getAddress() {
 		return address;
@@ -114,8 +132,6 @@ public class CustomerRequestDTO {
 		this.nomineeRelation = nomineeRelation;
 	}
 
-
-
 	public String getNomineePhone() {
 		return nomineePhone;
 	}
@@ -131,8 +147,5 @@ public class CustomerRequestDTO {
 	public void setIdentityProofNumber(String identityProofNumber) {
 		this.identityProofNumber = identityProofNumber;
 	}
-    
-    
-    
-
 }
+
