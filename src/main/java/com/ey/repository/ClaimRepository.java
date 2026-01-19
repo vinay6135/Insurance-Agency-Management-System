@@ -15,5 +15,7 @@ public interface ClaimRepository extends JpaRepository<Claim, Long> {
 		);
 	boolean existsByCustomerPolicyAndStatusIn(CustomerPolicy customerPolicy,List<ClaimStatus> statuses);
 
+	int countByStatusIn(List<ClaimStatus> statuses);
+	int countByStatus(ClaimStatus approved);
 }
 

@@ -33,7 +33,7 @@ public class CommissionController {
 
   @GetMapping("/admin/getAll")
   @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<List<AgentCommission>> adminCommissions() {
+  public ResponseEntity<List<CommissionResponseDTO>> adminCommissions() {
       return ResponseEntity.ok(service.getAll());
   }
 }

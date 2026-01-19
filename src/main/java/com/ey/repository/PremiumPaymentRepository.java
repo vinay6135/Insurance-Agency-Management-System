@@ -25,7 +25,10 @@ boolean existsByCustomerPolicyAndStatus(
         PaymentStatus status
 );
 boolean existsByCustomerPolicyIdAndStatus(Long id, PaymentStatus due);
+
 List<PremiumPayment> findByCustomerPolicyAgentIdAndStatus(Long agentId, PaymentStatus paid);
+
+List<PremiumPayment> findByStatus(PaymentStatus paid);
 
 }
 

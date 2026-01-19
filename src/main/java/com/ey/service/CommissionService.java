@@ -59,8 +59,22 @@ public class CommissionService {
         
     }
 
-    public List<AgentCommission> getAll() {
-        return repository.findAll();
+    public List<CommissionResponseDTO> getAll() {
+    	List<PremiumPayment> list=premiumrepo.findByStatus(PaymentStatus.PAID);
+    	if(!list.isEmpty())	
+    	{
+    		List<CommissionResponseDTO> reslist=new ArrayList<>();
+    		
+    		for(PremiumPayment payment:list)
+    		{
+    			reslist.add(createCommission(payment));
+    				
+    		}
+    		return reslist;
+    	}
+    	throw new ResourceNotFoundException("No commissions");
+    	
+        
     }
 }
 
