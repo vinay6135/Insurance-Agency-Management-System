@@ -32,11 +32,11 @@ public class CommissionService {
         commission.setCustomerPolicy(pp.getCustomerPolicy());
 
         commission.setAmount(pp.getAmount()* 0.10);
-        
         AgentCommission cr=repository.save(commission);
 
         CommissionResponseDTO resdto=new CommissionResponseDTO();
         resdto.setPremiumId(pp.getId());
+        resdto.setAgentId(cr.getAgent().getId());
         resdto.setAmount(pp.getAmount());
         resdto.setCommision(cr.getAmount());
         return resdto;

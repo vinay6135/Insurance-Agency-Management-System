@@ -4,6 +4,7 @@ public class CommissionResponseDTO {
 	
 	private Long premiumId;
 	private double amount;
+	private long agentId;
 	private double commision;
 	public Long getPremiumId() {
 		return premiumId;
@@ -16,6 +17,13 @@ public class CommissionResponseDTO {
 	}
 	public void setAmount(double amount) {
 		this.amount = amount;
+	}
+	
+	public long getAgentId() {
+		return agentId;
+	}
+	public void setAgentId(long agentId) {
+		this.agentId = agentId;
 	}
 	public double getCommision() {
 		return commision;
