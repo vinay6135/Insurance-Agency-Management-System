@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 
 @Entity
+
 public class PremiumPayment extends Auditable {
 
     @Id

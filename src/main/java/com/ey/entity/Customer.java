@@ -173,5 +173,10 @@ public class Customer extends Auditable {
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
+
+
+
    
 }
+
+

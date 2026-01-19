@@ -5,3 +5,4 @@ public enum InstallmentType {
     QUARTERLY,
     YEARLY
 }
+

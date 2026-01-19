@@ -107,6 +107,8 @@ public class CustomerResponseDTO {
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-	  
+	
+    
+    
 
 }

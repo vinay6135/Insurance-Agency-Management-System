@@ -38,7 +38,7 @@ public class CustomerService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if (customerRepository.existsByUser(user)) {
-            throw new BusinessException("Customer profile already exists");
+            throw new BusinessException("Customer profile already exists",HttpStatus.CONFLICT);
         }
         
         Customer customer=customermapper.toEntity(customerdto, user);
@@ -50,7 +50,7 @@ public class CustomerService {
     public CustomerResponseDTO getCustomer(Long id,String email) {
     	
     	Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new BusinessException("Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
         if (!customer.getUser().getEmail().equals(email)) {
             throw new AccessDeniedException("You are not authorized to access this customer");
@@ -70,18 +70,18 @@ public class CustomerService {
         	}
         	return dtolist;    	
         }
-        throw new BusinessException("No Customer created account");
+        throw new ResourceNotFoundException("No Customer created account");
     }
 
     public CustomerResponseDTO updateCustomer(Long id, UpdateCustomerRequest updated,String loggedInEmail) {
     	User user = userRepository.findByEmail(loggedInEmail)
-                .orElseThrow(() -> new BusinessException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     	
     	Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new BusinessException("Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
     	
     	if (!customer.getUser().getId().equals(user.getId())) {
-    		throw new BusinessException("You are not allowed to upadte other details");
+    		throw new BusinessException("You are not allowed to upadte other details",HttpStatus.FORBIDDEN);
             
         }
     	
@@ -101,3 +101,4 @@ public class CustomerService {
         customerRepository.deleteById(id);
     }
 }
+

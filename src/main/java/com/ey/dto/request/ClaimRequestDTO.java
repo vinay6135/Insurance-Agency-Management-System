@@ -25,4 +25,7 @@ public class ClaimRequestDTO {
 	public void setReason(String reason) {
 		this.reason = reason;
 	}
+    
+    
+
 }

@@ -13,6 +13,7 @@ import jakarta.persistence.MappedSuperclass;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
+
 public abstract class Auditable {
 
     @CreatedDate

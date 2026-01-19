@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
+
 public class PolicyCategory extends Auditable {
 
     @Id
@@ -14,7 +15,8 @@ public class PolicyCategory extends Auditable {
 
     private String categoryName;
     
-    private String description;
+    private String categoryDescription;
+    
 
 	public Long getId() {
 		return id;
@@ -32,12 +34,12 @@ public class PolicyCategory extends Auditable {
 		this.categoryName = categoryName;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getCategoryDescription() {
+		return categoryDescription;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setCategoryDescription(String categoryDescription) {
+		this.categoryDescription = categoryDescription;
 	}
 	
     

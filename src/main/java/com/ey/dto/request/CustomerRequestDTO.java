@@ -147,5 +147,7 @@ public class CustomerRequestDTO {
 	public void setIdentityProofNumber(String identityProofNumber) {
 		this.identityProofNumber = identityProofNumber;
 	}
+
+
 }
 

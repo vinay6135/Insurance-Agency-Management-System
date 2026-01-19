@@ -72,4 +72,3 @@ public class CustomerPolicy extends Auditable {
     
     
 }
-

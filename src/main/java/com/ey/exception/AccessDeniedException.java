@@ -1,8 +1,11 @@
 package com.ey.exception;
 
-public class AccessDeniedException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class AccessDeniedException extends BusinessException {
 
     public AccessDeniedException(String message) {
-        super(message);
+        super(message, HttpStatus.FORBIDDEN);
     }
 }
+
