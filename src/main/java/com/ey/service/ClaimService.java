@@ -2,6 +2,7 @@ package com.ey.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,9 +45,14 @@ public class ClaimService {
     private PremiumPaymentRepository pprepo;
 
     public ClaimResponseDTO raiseClaim(Long customerPolicyId, String reason) {
+    	
 
         CustomerPolicy cp = customerPolicyRepository.findById(customerPolicyId)
                 .orElseThrow(() -> new RuntimeException("Customer policy not found"));
+        if(repository.existsByCustomerPolicyAndStatusIn(cp, List.of(ClaimStatus.SUBMITTED,ClaimStatus.VERIFIED)))
+        {
+        	throw new BusinessException("Your claim is already under Progress. you cannot raise until it is resolved",HttpStatus.CONFLICT);
+        }
 
         Claim claim = new Claim();
         claim.setCustomerPolicy(cp);
@@ -113,6 +119,30 @@ public class ClaimService {
 
         repository.save(claim);
         return claimmapper.toResponse(claim);
+    }
+    
+    public ClaimResponseDTO finalupdate(Long claimid)
+    {
+    	Optional<Claim> claim=repository.findById(claimid);
+    	if(claim.isPresent())
+    	{
+    		if(claim.get().getStatus().equals(ClaimStatus.SUBMITTED))
+    		{
+    			throw new BusinessException("Claim is not verified by the Agent",HttpStatus.CONFLICT);
+    		}
+    		
+    		Claim cl=claim.get();
+    		cl.setStatus(ClaimStatus.APPROVED);
+    		Claim saved=repository.save(cl);
+    		notificationService.notify(
+                    cl.getCustomerPolicy().getCustomer(),
+                    "Claim Approved"
+            );
+    		return claimmapper.toResponse(saved);			
+    	}
+    	throw new ResourceNotFoundException("Claim Not Found");
+    
+    	
     }
 
     public Claim get(Long id) {

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ey.entity.Claim;
+import com.ey.entity.CustomerPolicy;
 import com.ey.enums.ClaimStatus;
 
 public interface ClaimRepository extends JpaRepository<Claim, Long> {
@@ -12,6 +13,7 @@ public interface ClaimRepository extends JpaRepository<Claim, Long> {
 		    Long agentId,
 		    ClaimStatus status
 		);
+	boolean existsByCustomerPolicyAndStatusIn(CustomerPolicy customerPolicy,List<ClaimStatus> statuses);
 
 }
 

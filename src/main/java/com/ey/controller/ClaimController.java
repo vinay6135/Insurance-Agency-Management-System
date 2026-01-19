@@ -49,7 +49,7 @@ public class ClaimController {
     }
 
     @PutMapping("/verify/{id}")
-    @PreAuthorize("hasAnyRole('AGENT','ADMIN')")
+    @PreAuthorize("hasRole('AGENT')")
     public ResponseEntity<ClaimResponseDTO> update(
             @PathVariable Long id,Authentication auth
            ) {
@@ -60,6 +60,13 @@ public class ClaimController {
                         )
                 
         );
+    }
+    
+    @PutMapping("/approve/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ClaimResponseDTO> approve( @PathVariable Long id,Authentication auth)
+    {
+    	return ResponseEntity.ok(service.finalupdate(id));
     }
 
     @GetMapping("/get/{id}")
