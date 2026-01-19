@@ -26,7 +26,6 @@ public class PremiumController {
 
     @GetMapping("/preview/{customerPolicyId}")
     @PreAuthorize("hasRole('CUSTOMER')")
-    //@PreAuthorize("hasRole('AGENT')")
     public ResponseEntity<?> preview(@PathVariable Long customerPolicyId) {
         return ResponseEntity.ok(service.preview(customerPolicyId));
     }
