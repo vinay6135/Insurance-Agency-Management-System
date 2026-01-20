@@ -24,8 +24,10 @@ import com.ey.entity.Agent;
 import com.ey.entity.CustomerPolicy;
 import com.ey.service.AgentService;
 
+import jakarta.validation.Valid;
+
 @RestController
-@RequestMapping("/agent")
+@RequestMapping("/api/agent")
 public class AgentController {
 
     @Autowired
@@ -33,7 +35,7 @@ public class AgentController {
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<AgentResponseDTO> addAgent(@RequestBody AgentRequestDTO agent) {
+    public ResponseEntity<AgentResponseDTO> addAgent(@Valid @RequestBody AgentRequestDTO agent) {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(agentService.addAgent(agent));

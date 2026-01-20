@@ -17,7 +17,7 @@ import com.ey.entity.AgentCommission;
 import com.ey.service.CommissionService;
 
 @RestController
-@RequestMapping("/commission")
+@RequestMapping("/api/commission")
 public class CommissionController {
 
   @Autowired

@@ -19,7 +19,7 @@ import com.ey.repository.NotificationRepository;
 import com.ey.service.NotificationService;
 
 @RestController
-@RequestMapping("/notification")
+@RequestMapping("/api/notification")
 public class NotificationController {
 	
 	@Autowired

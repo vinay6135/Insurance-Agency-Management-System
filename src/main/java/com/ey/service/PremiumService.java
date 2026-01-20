@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.ey.dto.response.CustomerPolicyResponseDTO;
+import com.ey.entity.AgentCommission;
 import com.ey.entity.Customer;
 import com.ey.entity.CustomerPolicy;
 import com.ey.entity.Notification;
@@ -20,6 +21,7 @@ import com.ey.exception.BadRequestException;
 import com.ey.exception.BusinessException;
 import com.ey.exception.ResourceNotFoundException;
 import com.ey.mapper.CustomerPolicyMapper;
+import com.ey.repository.AgentCommissionRepository;
 import com.ey.repository.CustomerPolicyRepository;
 import com.ey.repository.NotificationRepository;
 import com.ey.repository.PremiumPaymentRepository;
@@ -38,12 +40,20 @@ public class PremiumService {
     
     @Autowired
     private CustomerPolicyMapper customerpolicymapper;
+    
+    @Autowired
+    private AgentCommissionRepository acrepo;
 
     
-    public Map<String, Object> preview(Long customerPolicyId) {
+    public Map<String, Object> preview(Long customerPolicyId,String email) {
+    	
 
         CustomerPolicy cp = customerPolicyRepository.findById(customerPolicyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer policy not found"));
+        if(!cp.getCustomer().getUser().getEmail().equals(email))
+        {
+        	throw new ResourceNotFoundException("Customer policy not found");
+        }
 
         int age = cp.getCustomer().getAge();
         double basePremium = cp.getPolicy().getPremiumAmount();
@@ -59,10 +69,15 @@ public class PremiumService {
         );
     }
 
-    public CustomerPolicyResponseDTO pay(Long customerPolicyId, InstallmentType type) {
+    public CustomerPolicyResponseDTO pay(Long customerPolicyId, InstallmentType type,String email) {
+    	
 
         CustomerPolicy cp = customerPolicyRepository.findById(customerPolicyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer policy not found"));
+        if(!cp.getCustomer().getUser().getEmail().equals(email))
+        {
+        	throw new ResourceNotFoundException("Customer policy not found");
+        }
 
         int age = cp.getCustomer().getAge();
         double basePremium = cp.getPolicy().getPremiumAmount();
@@ -108,12 +123,12 @@ public class PremiumService {
                     + "Your first premium of ₹"+amount+" has been received.\n"
                     + "Your policy "+cp.getPolicy().getPolicyName()+" is now active.\n"
                     + "\n"
-                    + "Stay insured. Stay protected.\n"
-                    
             );
         	
         	
         }
+        else
+        {
 
         boolean alreadyPaid =
                 premiumPaymentRepository
@@ -134,6 +149,14 @@ public class PremiumService {
                 " for " + type +
                 " installment. Due before " + end
         );
+        
+        sendNotification(
+                cp.getCustomer(),
+                "Payment successful: ₹" + amount +
+                " paid for " + type +
+                " installment." 
+        );
+        }
 
         PremiumPayment payment = new PremiumPayment();
         payment.setCustomerPolicy(cp);
@@ -144,7 +167,7 @@ public class PremiumService {
         payment.setPeriodEndDate(end);
         payment.setStatus(PaymentStatus.PAID);
 
-        premiumPaymentRepository.save(payment);
+       PremiumPayment saved= premiumPaymentRepository.save(payment);
 
         if (cp.getStatus() != PolicyStatus.ACTIVE) {
             cp.setStatus(PolicyStatus.ACTIVE);
@@ -152,12 +175,18 @@ public class PremiumService {
         }
 
 
-        sendNotification(
-                cp.getCustomer(),
-                "Payment successful: ₹" + amount +
-                " paid for " + type +
-                " installment." 
-        );
+//        sendNotification(
+//                cp.getCustomer(),
+//                "Payment successful: ₹" + amount +
+//                " paid for " + type +
+//                " installment." 
+//        );
+        AgentCommission commission = new AgentCommission();
+        commission.setAgent(saved.getCustomerPolicy().getAgent());
+        commission.setCustomerPolicy(saved.getCustomerPolicy());
+
+        commission.setAmount(saved.getAmount()* 0.10);
+        acrepo.save(commission);
         CustomerPolicyResponseDTO resdto=customerpolicymapper.toResponse(cp);
         resdto.setInstallmentType(type);
 

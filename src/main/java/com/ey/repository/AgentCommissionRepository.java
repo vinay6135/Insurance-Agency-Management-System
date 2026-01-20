@@ -10,5 +10,7 @@ public interface AgentCommissionRepository
 extends JpaRepository<AgentCommission, Long> {
 
 List<AgentCommission> findByAgentId(Long agentId);
+
+List<AgentCommission> findByCustomerPolicyId(Long customerPolicyId);
 }
 

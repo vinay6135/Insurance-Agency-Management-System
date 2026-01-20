@@ -2,6 +2,7 @@ package com.ey.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import com.ey.repository.PolicyCategoryRepository;
 
 @Service
 public class PolicyCategoryService {
+	org.slf4j.Logger logger  = LoggerFactory.getLogger(PolicyCategoryService.class);
 	@Autowired
 	private PolicyCategoryMapper policymapper;
 
@@ -23,14 +25,22 @@ public class PolicyCategoryService {
     private PolicyCategoryRepository repository;
 
     public PolicyCategoryResponseDTO add(PolicyCategoryRequestDTO category) {
+    	logger.info("Creating new policy category with name={}",
+                category.getCategoryName());
+    	
     	PolicyCategory policy=policymapper.toEntity(category);
     	PolicyCategory saved=repository.save(policy);
+    	
+    	logger.info("Policy category created successfully with id={}",
+                saved.getId());
     	return policymapper.toResponse(saved);
     	
         
     }
 
     public PolicyCategoryResponseDTO get(Long id) {
+    	
+    	logger.info("Fetching policy category with id={}", id);
         if(repository.findById(id).isPresent())
         {
         	return policymapper.toResponse(repository.findById(id).get());
@@ -39,6 +49,8 @@ public class PolicyCategoryService {
     }
 
     public List<PolicyCategoryResponseDTO> getAll() {
+    	logger.info("Fetching all policy categories");
+    	
         List<PolicyCategory> list=repository.findAll();
         if(!list.isEmpty())
         {

@@ -14,7 +14,7 @@ public class UpdatePolicyRequestDTO {
 	    @Min(1)
 	    private Integer durationYears;
 
-	    private Boolean active;
+	    
 
 		public Double getCoverageAmount() {
 			return coverageAmount;
@@ -40,13 +40,7 @@ public class UpdatePolicyRequestDTO {
 			this.durationYears = durationYears;
 		}
 
-		public Boolean getActive() {
-			return active;
-		}
 
-		public void setActive(Boolean active) {
-			this.active = active;
-		}
 	    
 	    
 	

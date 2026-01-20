@@ -44,7 +44,7 @@ public class PolicySchemeMapper {
 		policy.setCoverageAmount(request.getCoverageAmount());
 		policy.setDurationYears(request.getDurationYears());
 		policy.setPremiumAmount(request.getPremiumAmount());
-		policy.setActive(request.getActive());
+		
 		
 	}
 

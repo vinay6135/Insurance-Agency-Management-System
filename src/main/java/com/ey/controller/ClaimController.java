@@ -24,7 +24,7 @@ import com.ey.enums.ClaimStatus;
 import com.ey.service.ClaimService;
 
 @RestController
-@RequestMapping("/claim")
+@RequestMapping("/api/claim")
 public class ClaimController {
 
     @Autowired
@@ -57,7 +57,7 @@ public class ClaimController {
         return ResponseEntity.ok(
                 service.updateclaim(
                         id,auth.getName()
-                        )
+                     )
                 
         );
     }

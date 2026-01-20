@@ -1,23 +1,24 @@
 package com.ey.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class UpdateCustomerRequest {
 	
-	 @NotBlank(message = "Phone number is required")
+	    @NotNull(message = "Phone number is required")
 	    @Pattern(regexp = "^[6-9]\\d{9}$", message = "Invalid Indian phone number")
 	    private String contactNumber;
 	 
-	 @NotBlank(message = "Address is required")
+	   @NotBlank(message = "Address is required")
 	    @Size(min = 10)
 	    private String address;
 	 
-	 @NotBlank(message = "Nominee name is required")
+	   @NotBlank(message = "Nominee name is required")
 	    private String nomineeName;
 
-	   @NotBlank(message = "Nominee relation is required")
+	    @NotBlank(message = "Nominee relation is required")
 	    private String nomineeRelation;
 	    
 	    @NotBlank(message="Nominee phone number required")

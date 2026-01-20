@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ey.service.ReportService;
 
 @RestController
-@RequestMapping("/report")
+@RequestMapping("/api/report")
 public class ReportController {
 
     @Autowired

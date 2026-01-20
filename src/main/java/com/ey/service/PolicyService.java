@@ -2,6 +2,7 @@ package com.ey.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import com.ey.repository.PolicyRepository;
 
 @Service
 public class PolicyService {
+	org.slf4j.Logger logger  = LoggerFactory.getLogger(PolicyService.class);
 	
 	@Autowired
 	private PolicySchemeMapper policymapper;
@@ -35,6 +37,7 @@ public class PolicyService {
     private CustomerPolicyRepository customerpolicyRepository;
 
     public PolicyResponseDTO add(PolicyRequestDTO request, Long categoryId) {
+    	logger.info("Creating new policy under categoryId={}", categoryId);
 
         PolicyCategory category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
@@ -42,10 +45,13 @@ public class PolicyService {
         
         Policy policy=policymapper.toEntity(request, category);
         Policy saved=policyRepository.save(policy);
+        logger.info("Policy created successfully with id={}, name={}",
+                saved.getId(), saved.getPolicyName());
         return policymapper.toResponse(saved);
     }
 
     public PolicyResponseDTO get(Long id) {
+    	logger.info("Fetching policy with id={}", id);
     	if(policyRepository.findById(id).isPresent())
     	{
     		return policymapper.toResponse(policyRepository.findById(id).get());
@@ -55,7 +61,9 @@ public class PolicyService {
     }
 
     public List<PolicyResponseDTO> getAll() {
-        List<Policy> list=policyRepository.findAll();
+    	
+    	logger.info("Fetching all active policies");
+        List<Policy> list=policyRepository.findByActiveTrue();
         if(!list.isEmpty())
         {
         	List<PolicyResponseDTO> dtolist=new ArrayList<>();
@@ -69,6 +77,7 @@ public class PolicyService {
     }
 
     public List<PolicyResponseDTO> getByCategory(Long categoryId) {
+    	
         if(categoryRepository.findById(categoryId).isPresent())
         {
         	return policyRepository.findByCategoryIdAndActiveTrue(categoryId)

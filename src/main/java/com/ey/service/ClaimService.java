@@ -3,6 +3,7 @@ package com.ey.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ import com.ey.repository.PremiumPaymentRepository;
 
 @Service
 public class ClaimService {
+	org.slf4j.Logger logger  = LoggerFactory.getLogger(ClaimService.class);
 	
 	@Autowired
 	private ClaimMapper claimmapper;
@@ -45,12 +47,14 @@ public class ClaimService {
     private PremiumPaymentRepository pprepo;
 
     public ClaimResponseDTO raiseClaim(Long customerPolicyId, String reason) {
+    	 logger.info("Received claim request for CustomerPolicyId={}, Reason={}", customerPolicyId, reason);
     	
 
         CustomerPolicy cp = customerPolicyRepository.findById(customerPolicyId)
                 .orElseThrow(() -> new RuntimeException("Customer policy not found"));
         if(repository.existsByCustomerPolicyAndStatusIn(cp, List.of(ClaimStatus.SUBMITTED,ClaimStatus.VERIFIED)))
         {
+        	logger.warn("Claim already in progress for CustomerPolicyId={}", customerPolicyId);
         	throw new BusinessException("Your claim is already under Progress. you cannot raise until it is resolved",HttpStatus.CONFLICT);
         }
 
@@ -64,11 +68,15 @@ public class ClaimService {
                 "Claim submitted successfully"
         );
 
-        repository.save(claim);
-        return claimmapper.toResponse(claim);
+        Claim saved=repository.save(claim);
+
+        logger.info("Claim submitted successfully. ClaimId={}, CustomerPolicyId={}",
+                saved.getId(), customerPolicyId);
+        return claimmapper.toResponse(saved);
     }
     
     public List<ClaimResponseDTO> getAssignedClaims(String agentEmail) {
+    	logger.info("Fetching assigned claims for Agent with AgentEmail={}", agentEmail);
 
         Agent agent = agentRepository.findByUserEmail(agentEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("Agent not found"));
@@ -76,6 +84,7 @@ public class ClaimService {
         List<Claim> list=repository.findByCustomerPolicyAgentIdAndStatus(agent.getId(),ClaimStatus.SUBMITTED);
         if(!list.isEmpty())
         {
+        	logger.info("Found {} assigned claims for AgentId={}", list.size(), agent.getId());
         	List<ClaimResponseDTO> resdto=new ArrayList<>();
         	for(Claim claim:list)
         	{
@@ -87,6 +96,7 @@ public class ClaimService {
     }
 
     public ClaimResponseDTO updateclaim(Long claimid, String agentEmail) {
+    	logger.info("Agent verification request. ClaimId={}, AgentEmail={}", claimid, agentEmail);
     	
     	Agent agent = agentRepository.findByUserEmail(agentEmail)
                 .orElseThrow(() -> new ResourceNotFoundException("Agent not found"));
@@ -123,6 +133,7 @@ public class ClaimService {
     
     public ClaimResponseDTO finalupdate(Long claimid)
     {
+    	logger.info("Admin approval request. ClaimId={}", claimid);
     	Optional<Claim> claim=repository.findById(claimid);
     	if(claim.isPresent())
     	{

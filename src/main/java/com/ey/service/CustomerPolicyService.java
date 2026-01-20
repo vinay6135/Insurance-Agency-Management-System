@@ -3,6 +3,7 @@ package com.ey.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import com.ey.repository.PolicyRepository;
 
 @Service
 public class CustomerPolicyService {
+	org.slf4j.Logger logger  = LoggerFactory.getLogger(CustomerPolicyService.class);
 	@Autowired
 	private CustomerPolicyMapper customerpolicymapper;
 
@@ -35,6 +37,7 @@ public class CustomerPolicyService {
     private PolicyRepository policyRepository;
 
     public CustomerPolicyResponseDTO purchasePolicy(Long policyId, String email) {
+    	logger.info("Purchase policy request received. PolicyId={}, CustomerEmail={}", policyId, email);
 
         Customer customer = customerRepository.findAll().stream()
                 .filter(c -> c.getUser().getEmail().equals(email))
@@ -45,7 +48,7 @@ public class CustomerPolicyService {
                 .orElseThrow(() -> new ResourceNotFoundException("Policy not found"));
 
         if (!policy.isActive()) {
-            throw new ResourceNotFoundException("Policy is inactive");
+            throw new ResourceNotFoundException("Policy not found");
         }
       Optional<CustomerPolicy> existCustomer= repository.findByCustomerAndPolicyAndStatusIn(
                 customer,
@@ -59,10 +62,14 @@ public class CustomerPolicyService {
       {
     	  if(existCustomer.get().getStatus().equals(PolicyStatus.PENDING_PAYMENT))
     	  {
+    		  logger.warn("Duplicate purchase attempt (pending payment). CustomerId={}, PolicyId={}",
+                      customer.getId(), policyId);
     		  throw new BusinessException("You have already Purchased this Policy please complete the payment",HttpStatus.CONFLICT);		  
     	  }
     	  if(existCustomer.get().getStatus().equals(PolicyStatus.ACTIVE))
     	  {
+    		  logger.warn("Duplicate purchase attempt (active policy). CustomerId={}, PolicyId={}",
+                      customer.getId(), policyId);
     		  throw new BusinessException("You are an Active Customer of this policy you cannot buy again this Policy with Id:"+policyId,HttpStatus.CONFLICT);
     	  }
     	  
@@ -78,6 +85,7 @@ public class CustomerPolicyService {
 
 
     public CustomerPolicyResponseDTO get(Long id) {
+    	 logger.info("Fetching CustomerPolicy by id={}", id);
     	if(repository.findById(id).isPresent())
     	{
     		return customerpolicymapper.toResponse(repository.findById(id).get());
@@ -101,6 +109,7 @@ public class CustomerPolicyService {
     }
 
     public String cancel(Long id,String email) {
+    	logger.info("Cancel policy request received. CustomerPolicyId={}, CustomerEmail={}", id, email);
         if(repository.findById(id).isPresent())
         {
         	if(repository.findById(id).get().getCustomer().getUser().getEmail().equals(email))

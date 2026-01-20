@@ -6,17 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ey.dto.request.ResetPasswordRequestDTO;
 import com.ey.dto.response.SignupResponse;
 import com.ey.entity.User;
 import com.ey.enums.Role;
 import com.ey.service.AuthService;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     @Autowired
@@ -51,6 +53,23 @@ public class AuthController {
         );
 
         return ResponseEntity.ok(Map.of("token", token));
+    }
+    @PutMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(
+            @RequestBody ResetPasswordRequestDTO request) {
+
+        return ResponseEntity.ok(
+                authService.resetPassword(
+                        request.getEmail(),
+                        request.getOldPassword(),
+                        request.getNewPassword()
+                )
+        );
+    }
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout()
+    {
+    	return ResponseEntity.ok("Logout Successfull");
     }
 }
 

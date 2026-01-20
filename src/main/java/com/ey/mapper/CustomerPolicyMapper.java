@@ -14,12 +14,11 @@ public class CustomerPolicyMapper {
 	{
 		CustomerPolicyResponseDTO response=new CustomerPolicyResponseDTO();
 		response.setCustomerPolicyId(request.getId());
-		response.setPolicyId(request.getId());
+		response.setPolicyId(request.getPolicy().getId());
 		response.setPolicyName(request.getPolicy().getPolicyName());
 		response.setCoverageAmount(request.getPolicy().getCoverageAmount());
 		response.setPremiumAmount(request.getPolicy().getPremiumAmount());
 		response.setStatus(request.getStatus());
-		//response.setInstallmentType(null);
 		return response;
 	}
 

@@ -22,7 +22,7 @@ import com.ey.entity.CustomerPolicy;
 import com.ey.service.CustomerPolicyService;
 
 @RestController
-@RequestMapping("/customer-policy")
+@RequestMapping("/api/customer-policy")
 public class CustomerPolicyController {
 
     @Autowired

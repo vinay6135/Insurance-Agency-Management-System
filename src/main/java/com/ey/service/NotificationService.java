@@ -2,6 +2,7 @@ package com.ey.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import com.ey.repository.NotificationRepository;
 
 @Service
 public class NotificationService {
+	org.slf4j.Logger logger  = LoggerFactory.getLogger(NotificationService.class);
 	
 	@Autowired
 	private CustomerRepository customerrepo;
@@ -24,6 +26,8 @@ public class NotificationService {
     private NotificationRepository repository;
 
     public void notify(Customer customer, String message) {
+    	logger.info("Sending notification to customerId={} : {}",
+                customer.getId(), message);
 
         Notification notification = new Notification();
         notification.setCustomer(customer);
@@ -34,6 +38,8 @@ public class NotificationService {
     
     public List<NotificationResponseDTO> toResponse(long id,String email)
     {
+    	logger.info("Fetching notifications for customerId={} by email={}",
+                id, email);
     	if(customerrepo.findById(id).get().getUser().getEmail().equals(email))
     	{
     		List<Notification> list=repository.findByCustomerId(id);

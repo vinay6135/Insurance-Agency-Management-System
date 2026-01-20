@@ -26,7 +26,7 @@ import com.ey.service.CustomerService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/client")
+@RequestMapping("/api/client")
 public class CustomerController {
 
   @Autowired
@@ -63,8 +63,8 @@ public class CustomerController {
 
   @PutMapping("/edit/{id}")
   @PreAuthorize("hasRole('CUSTOMER')")
-  public ResponseEntity<CustomerResponseDTO> update(@Valid
-          @PathVariable Long id,
+  public ResponseEntity<CustomerResponseDTO> update(
+          @PathVariable Long id,@Valid
           @RequestBody UpdateCustomerRequest updatedto,Authentication authentication) {
   	CustomerResponseDTO response=customerService.updateCustomer(id, updatedto, authentication.getName());
   	return ResponseEntity.ok(response); 

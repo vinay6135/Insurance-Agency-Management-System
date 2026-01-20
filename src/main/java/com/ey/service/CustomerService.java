@@ -2,6 +2,7 @@ package com.ey.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import com.ey.repository.UserRepository;
 
 @Service
 public class CustomerService {
+	org.slf4j.Logger logger  = LoggerFactory.getLogger(CustomerService.class);
 	
 	@Autowired
 	private CustomerMapper customermapper;
@@ -33,9 +35,13 @@ public class CustomerService {
     private UserRepository userRepository;
 
     public CustomerResponseDTO addCustomer(CustomerRequestDTO customerdto, String email) {
+    	logger.info("Add customer profile request received. Email={}", email);
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    	User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    logger.error("User not found while creating customer profile. Email={}", email);
+                    return new ResourceNotFoundException("User not found");
+                });
 
         if (customerRepository.existsByUser(user)) {
             throw new BusinessException("Customer profile already exists",HttpStatus.CONFLICT);
@@ -48,6 +54,7 @@ public class CustomerService {
     }
 
     public CustomerResponseDTO getCustomer(Long id,String email) {
+    	logger.info("Fetch customer request received. CustomerId={}, RequestEmail={}", id, email);
     	
     	Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
@@ -60,6 +67,7 @@ public class CustomerService {
     }
 
     public List<CustomerResponseDTO> getAllCustomers() {
+    	logger.info("Fetch all customers request received");
         List<Customer> list=customerRepository.findAll();
         if(!list.isEmpty())
         {
@@ -68,8 +76,10 @@ public class CustomerService {
         	{
         		dtolist.add(customermapper.toResponse(customer));
         	}
+        	logger.info("Total customers found: {}", list.size());
         	return dtolist;    	
         }
+        logger.warn("No customers found in system");
         throw new ResourceNotFoundException("No Customer created account");
     }
 

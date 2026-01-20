@@ -3,8 +3,10 @@ package com.ey.controller;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +20,7 @@ import com.ey.enums.InstallmentType;
 import com.ey.service.PremiumService;
 
 @RestController
-@RequestMapping("/premium")
+@RequestMapping("/api/premium")
 public class PremiumController {
 
     @Autowired
@@ -26,18 +28,18 @@ public class PremiumController {
 
     @GetMapping("/preview/{customerPolicyId}")
     @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseEntity<?> preview(@PathVariable Long customerPolicyId) {
-        return ResponseEntity.ok(service.preview(customerPolicyId));
+    public ResponseEntity<?> preview(@PathVariable Long customerPolicyId, Authentication auth) {
+        return ResponseEntity.ok(service.preview(customerPolicyId,auth.getName()));
     }
 
     @PostMapping("/pay")
     @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseEntity<CustomerPolicyResponseDTO> pay(@RequestBody Map<String, String> request) {
+    public ResponseEntity<CustomerPolicyResponseDTO> pay(@RequestBody Map<String, String> request,Authentication auth) {
 
         return ResponseEntity.ok(
                 service.pay(
                         Long.valueOf(request.get("customerPolicyId")),
-                        InstallmentType.valueOf(request.get("installmentType"))
+                        InstallmentType.valueOf(request.get("installmentType")),auth.getName()
                 )
         );
     }

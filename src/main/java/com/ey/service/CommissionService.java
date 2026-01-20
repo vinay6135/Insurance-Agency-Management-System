@@ -2,6 +2,7 @@ package com.ey.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,60 +19,52 @@ import com.ey.repository.PremiumPaymentRepository;
 
 @Service
 public class CommissionService {
+	org.slf4j.Logger logger  = LoggerFactory.getLogger(CommissionService.class);
 
     @Autowired
     private AgentCommissionRepository repository;
-    
-    @Autowired
-    private PremiumPaymentRepository premiumrepo;
 
-    public CommissionResponseDTO createCommission(PremiumPayment pp) {
-
-        AgentCommission commission = new AgentCommission();
-        commission.setAgent(pp.getCustomerPolicy().getAgent());
-        commission.setCustomerPolicy(pp.getCustomerPolicy());
-
-        commission.setAmount(pp.getAmount()* 0.10);
-        AgentCommission cr=repository.save(commission);
+    public CommissionResponseDTO createCommission(AgentCommission ac) {
 
         CommissionResponseDTO resdto=new CommissionResponseDTO();
-        resdto.setPremiumId(pp.getId());
-        resdto.setAgentId(cr.getAgent().getId());
-        resdto.setAmount(pp.getAmount());
-        resdto.setCommision(cr.getAmount());
+        resdto.setPremiumId(ac.getId());
+        resdto.setAgentId(ac.getAgent().getId());
+        resdto.setAmount(ac.getCustomerPolicy().getPolicy().getPremiumAmount());
+        resdto.setCommision(ac.getAmount());
         return resdto;
     }
 
     public List<CommissionResponseDTO> getAgentCommissions(Long agentId) {
-    	List<PremiumPayment> list=premiumrepo.findByCustomerPolicyAgentIdAndStatus(agentId,PaymentStatus.PAID);
-    	if(!list.isEmpty())	
+    	logger.info("Fetching commissions for AgentId={}", agentId);
+    	List<AgentCommission> list=repository.findByAgentId(agentId);
+    	if(!list.isEmpty())
     	{
-    		List<CommissionResponseDTO> reslist=new ArrayList<>();
-    		
-    		for(PremiumPayment payment:list)
+    		List<CommissionResponseDTO> resdto=new ArrayList<>();
+    		for(AgentCommission agc:list)
     		{
-    			reslist.add(createCommission(payment));
-    				
+    			resdto.add(createCommission(agc));
     		}
-    		return reslist;
+    		return resdto;
     	}
-    	throw new ResourceNotFoundException("No commissions added");
-        
+    	logger.warn("No commissions found for AgentId={}", agentId);
+    	throw new ResourceNotFoundException("No commissions Found");     
     }
 
     public List<CommissionResponseDTO> getAll() {
-    	List<PremiumPayment> list=premiumrepo.findByStatus(PaymentStatus.PAID);
+    	logger.info("Fetching all agent commissions");
+    	List<AgentCommission> list=repository.findAll();
     	if(!list.isEmpty())	
     	{
     		List<CommissionResponseDTO> reslist=new ArrayList<>();
     		
-    		for(PremiumPayment payment:list)
+    		for(AgentCommission agc:list)
     		{
-    			reslist.add(createCommission(payment));
+    			reslist.add(createCommission(agc));
     				
     		}
     		return reslist;
     	}
+    	logger.warn("No commissions found in system");
     	throw new ResourceNotFoundException("No commissions");
     	
         

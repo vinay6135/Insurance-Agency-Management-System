@@ -24,7 +24,7 @@ import com.ey.service.PolicyCategoryService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/policy-category")
+@RequestMapping("/api/policy-category")
 public class PolicyCategoryController {
 
     @Autowired
@@ -48,9 +48,9 @@ public class PolicyCategoryController {
 
     @PutMapping("/edit/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PolicyCategoryResponseDTO> update(@Valid
+    public ResponseEntity<PolicyCategoryResponseDTO> update(
             @PathVariable Long id,
-            @RequestBody UpdatePolicyCategoryRequest category) {
+            @Valid @RequestBody UpdatePolicyCategoryRequest category) {
 
         return ResponseEntity.ok(service.update(category));
     }

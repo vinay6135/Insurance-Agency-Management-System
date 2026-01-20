@@ -26,7 +26,7 @@ import com.ey.service.PolicyService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/insurance")
+@RequestMapping("/api/insurance")
 public class PolicyController {
 
     @Autowired
@@ -62,7 +62,7 @@ public class PolicyController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PolicyResponseDTO> update(
             @PathVariable Long id,
-            @RequestBody UpdatePolicyRequestDTO updatepolicy) {
+            @Valid @RequestBody UpdatePolicyRequestDTO updatepolicy) {
 
         return ResponseEntity.ok(policyService.update(id, updatepolicy));
     }

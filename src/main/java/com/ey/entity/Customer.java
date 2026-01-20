@@ -46,9 +46,7 @@ public class Customer extends Auditable {
 
     private String identityProofNumber; 
 
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
+   
 
 	public Long getId() {
 		return id;
@@ -158,21 +156,7 @@ public class Customer extends Auditable {
 		this.identityProofNumber = identityProofNumber;
 	}
 
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public LocalDateTime getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(LocalDateTime updatedAt) {
-		this.updatedAt = updatedAt;
-	}
+	
 
 
 
